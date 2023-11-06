@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic generated table</title>
+</head>
+<body>
+    <table id="dynamic_table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>E-mail</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</body>
+
+<script>
+    const tableData = [{
+        "id": 1,
+        "first_name": "Boony",
+        "last_name": "Ratledge",
+        "email": "bratledge0@mysql.com",
+        "gender": "Male"
+    }, {
+        "id": 2,
+        "first_name": "Gilberto",
+        "last_name": "Bresson",
+        "email": "gbresson1@ebay.com",
+        "gender": "Male"
+    }, {
+        "id": 3,
+        "first_name": "Prissie",
+        "last_name": "Suermeier",
+        "email": "psuermeier2@army.mil",
+        "gender": "Non-binary"
+    }];
+
+    function generateTable(tableData) {
+        const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
+        tableData.forEach(rowData => {
+            let row = document.createElement('tr');
+
+            Object.values(rowData).forEach(text => {
+                let cell = document.createElement('td');
+                let textNode = document.createTextNode(text);
+                cell.appendChild(textNode);
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    generateTable(tableData);
+</script>
+
+</html>
