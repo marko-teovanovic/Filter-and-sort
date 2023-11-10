@@ -14,12 +14,14 @@
                 <th>Last Name</th>
                 <th>E-mail</th>
                 <th>Gender</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
     <input type = button class = "b" value = "Add new row" onclick = newRow()>  
+    <input type = button class = "c" value = "Sort" onclick = sort()>  
 </body>
 
 <script>
@@ -43,15 +45,35 @@
         "gender": "Non-binary"
     }];
 
+    function generateTable(tableData) {
+        const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
+        tableData.forEach(rowData => {
+            let row = document.createElement('tr');
+
+            Object.values(rowData).forEach(text => {
+                let cell = document.createElement('td');
+                let textNode = document.createTextNode(text);
+                cell.appendChild(textNode);
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    generateTable(tableData);
+
     function newRow() {
         const dynamic_table = document.getElementById("dynamic_table")
         const rows = dynamic_table.rows.lengt;
         const newRows = dynamic_table.insertRow(rows);
+        
         const cell1 = newRows.insertCell(0);
         const cell2 = newRows.insertCell(1);
         const cell3 = newRows.insertCell(2);
         const cell4 = newRows.insertCell(3);
         const cell5 = newRows.insertCell(4);
+        
         const id = document.createElement("input");
         const first_name = document.createElement("input");
         const last_name = document.createElement("input");
@@ -72,23 +94,28 @@
 
         }
 
-    function generateTable(tableData) {
-        const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
-        tableData.forEach(rowData => {
-            let row = document.createElement('tr');
+        function sort() {
+            const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
+            const rows = Array.from(tableBody.rows);
 
-            Object.values(rowData).forEach(text => {
-                let cell = document.createElement('td');
-                let textNode = document.createTextNode(text);
-                cell.appendChild(textNode);
-                row.appendChild(cell);
+            rows.sort(function (a, b) {
+                const nameA = a.cells[1].innerText.toUpperCase();
+                const nameB = b.cells[1].innerText.toUpperCase();
+                if (nameA < nameB) {
+                    return -1;
+                } else if (nameA > nameB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             });
 
-            tableBody.appendChild(row);
-        });
-    }
+            rows.forEach(row => tableBody.removeChild(row));
 
-    generateTable(tableData);
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+
+        generateTable(tableData);
 </script>
 
 </html>
