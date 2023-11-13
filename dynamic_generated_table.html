@@ -14,108 +14,121 @@
                 <th>Last Name</th>
                 <th>E-mail</th>
                 <th>Gender</th>
-                <th></th>
+                <th>Edit Options</th>
+            </tr>
+            <tr id="newElement" style="display: none;">
+                <td><input type="text" placeholder="new ID"></td>
+                <td><input type="text" placeholder="First Name"></td>
+                <td><input type="text" placeholder="Last Name"></td>
+                <td><input type="text" placeholder="E-mail"></td>
+                <td>
+                    <select name="gender" id="gender">
+                        <option value="default" selected>...</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="nothing">Prefer not to say</option>
+                    </select>
+                </td>
+                <td><button onclick="saveElement(this)">Save</button></td>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
-    <input type = button class = "b" value = "Add new row" onclick = newRow()>  
-    <input type = button class = "c" value = "Sort" onclick = sort()>  
-</body>
+    <button onclick="addNew()">Add New Element</button>
 
-<script>
-    const tableData = [{
-        "id": 1,
-        "first_name": "Boony",
-        "last_name": "Ratledge",
-        "email": "bratledge0@mysql.com",
-        "gender": "Male"
-    }, {
-        "id": 2,
-        "first_name": "Gilberto",
-        "last_name": "Bresson",
-        "email": "gbresson1@ebay.com",
-        "gender": "Male"
-    }, {
-        "id": 3,
-        "first_name": "Prissie",
-        "last_name": "Suermeier",
-        "email": "psuermeier2@army.mil",
-        "gender": "Non-binary"
-    }];
+    <script>
+        const tableKeys = ["id", "first_name", "last_name", "email", "gender"];
+        const tableData = [
+            {
+                "id": 1,
+                "first_name": "Boony",
+                "last_name": "Ratledge",
+                "email": "bratledge0@mysql.com",
+                "gender": "Male"
+            },
+            {
+                "id": 2,
+                "first_name": "Gilberto",
+                "last_name": "Bresson",
+                "email": "gbresson1@ebay.com",
+                "gender": "Male"
+            },
+            {
+                "id": 3,
+                "first_name": "Prissie",
+                "last_name": "Suermeier",
+                "email": "psuermeier2@army.mil",
+                "gender": "Non-binary"
+            },
+            {
+                "id": 4,
+                "first_name": "Artemas",
+                "last_name": "Mulbery",
+                "email": "amulbery0@hexun.com",
+                "gender": "Male"
+            }
+        ];
 
-    function generateTable(tableData) {
-        const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
-        tableData.forEach(rowData => {
-            let row = document.createElement('tr');
+        function generateTable(tableData) {
+            const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
+            tableData.forEach(rowData => {
+                let row = document.createElement('tr');
 
-            Object.values(rowData).forEach(text => {
-                let cell = document.createElement('td');
-                let textNode = document.createTextNode(text);
-                cell.appendChild(textNode);
-                row.appendChild(cell);
+                Object.entries(rowData).forEach(([key, value]) => {
+                    let cell = document.createElement('td');
+                    let textNode = document.createTextNode(value);
+                    cell.appendChild(textNode);
+                    row.appendChild(cell);
+                });
+
+                let actionCell = document.createElement('td');
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = function () {
+                    deleteRow(row);
+                };
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+
+                tableBody.appendChild(row);
             });
-
-            tableBody.appendChild(row);
-        });
-    }
-
-    generateTable(tableData);
-
-    function newRow() {
-        const dynamic_table = document.getElementById("dynamic_table")
-        const rows = dynamic_table.rows.lengt;
-        const newRows = dynamic_table.insertRow(rows);
-        
-        const cell1 = newRows.insertCell(0);
-        const cell2 = newRows.insertCell(1);
-        const cell3 = newRows.insertCell(2);
-        const cell4 = newRows.insertCell(3);
-        const cell5 = newRows.insertCell(4);
-        
-        const id = document.createElement("input");
-        const first_name = document.createElement("input");
-        const last_name = document.createElement("input");
-        const email = document.createElement("input");
-        const gender = document.createElement("input");
-
-        id.type = "number";
-        first_name.type = "text";
-        last_name.type = "text";
-        email.type = "text";
-        gender.type = "text";
-
-        cell1.appendChild(id);
-        cell2.appendChild(first_name);
-        cell3.appendChild(last_name);
-        cell4.appendChild(email);
-        cell5.appendChild(gender);
-
         }
 
-        function sort() {
-            const tableBody = document.getElementById('dynamic_table').getElementsByTagName('tbody')[0];
-            const rows = Array.from(tableBody.rows);
+        function deleteRow(row) {
+            row.remove();
+        }
 
-            rows.sort(function (a, b) {
-                const nameA = a.cells[1].innerText.toUpperCase();
-                const nameB = b.cells[1].innerText.toUpperCase();
-                if (nameA < nameB) {
-                    return -1;
-                } else if (nameA > nameB) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
+        function addNew() {
+            const newRowTemplate = document.getElementById('newElement');
+            const newRow = newRowTemplate.cloneNode(true);
+            newRow.removeAttribute('id');
+            newRow.style.display = 'table-row';
 
-            rows.forEach(row => tableBody.removeChild(row));
+            document.getElementById('dynamic_table').getElementsByTagName('tbody')[0].appendChild(newRow);
+        }
 
-            rows.forEach(row => tableBody.appendChild(row));
+        function saveElement(button) {
+            const newRow = button.closest('tr');
+            const inputs = newRow.querySelectorAll('input');
+            const select = newRow.querySelector('select');
+
+            const newRowData = {
+                "id": inputs[0].value,
+                "first_name": inputs[1].value,
+                "last_name": inputs[2].value,
+                "email": inputs[3].value,
+                "gender": select.value
+            };
+
+            tableData.push(newRowData);
+
+            generateTable([newRowData]);
+
+            newRow.remove();
         }
 
         generateTable(tableData);
-</script>
-
+    </script>
+</body>
 </html>
